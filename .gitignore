@@ -1,0 +1,45 @@
+# Python related files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+venv/
+env/
+
+# Compiled files
+*.so
+*.pyd
+*.dll
+*.o
+*.a
+*.pyc
+*.pyo
+
+# IDE files
+.idea/
+.vscode/
+
+# Compiled source
+dist/
+build/
+
+# OpenCV build artifacts (you may customize this based on your OpenCV setup)
+opencv/build/
+
+# Logs and local data
+*.log
+*.json
+*.sqlite3
+
+# System-specific files
+*.DS_Store
+Thumbs.db
+
+# Project-specific config files
+*.ini
+*.cfg
+*.conf
+
+# Ignore Jupyter Notebook checkpoints
+.ipynb_checkpoints/
