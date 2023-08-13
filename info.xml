@@ -1,0 +1,27 @@
+<students>
+    <student>
+        <index_no>1</index_no>
+        <name>John Doe</name>
+        <age>20</age>
+    </student>
+    <student>
+        <index_no>2</index_no>
+        <name>Jane Smith</name>
+        <age>22</age>
+    </student>
+    <student>
+        <index_no>3</index_no>
+        <name>Michael Johnson</name>
+        <age>21</age>
+    </student>
+    <student>
+        <index_no>4</index_no>
+        <name>Amy Brown</name>
+        <age>23</age>
+    </student>
+    <student>
+        <index_no>5</index_no>
+        <name>David Wilson</name>
+        <age>19</age>
+    </student>
+</students>
