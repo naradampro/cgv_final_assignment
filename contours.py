@@ -3,7 +3,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 image = cv.imread("sign_sheets/4.jpeg")
-ht, wd = image.shape[:2]
 
 imgray = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
 ret, thresh = cv.threshold(imgray, 127, 255, 0)
@@ -20,6 +19,8 @@ corners = cv.approxPolyDP(big_contour, 0.04 * peri, True)
 
 # Define the input corners of the quadrilateral 'corners'
 icorners = np.float32(corners)
+
+x, y, wd, ht = cv.boundingRect(icorners)
 
 # Define the corresponding output corners for the rectangle
 ocorners = np.float32([[wd, 0], [wd, ht], [0, ht], [0, 0]])
