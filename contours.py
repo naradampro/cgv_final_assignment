@@ -3,11 +3,36 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
+def crop_image_to_table_area(image):
+    imgray = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
+
+    blurred_image = cv.GaussianBlur(imgray, (21, 21), sigmaX=15)
+
+    ret, thresh = cv.threshold(blurred_image, 127, 255, 0)
+    contours, hierarchy = cv.findContours(
+        thresh, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
+
+    kernel = np.ones((30, 30), np.uint8)
+
+    eroded_image = cv.erode(thresh, kernel, iterations=15)
+
+    contours, hierarchy = cv.findContours(
+        eroded_image, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
+
+    big_cont = contours[1]
+
+    x, y, w, h = cv.boundingRect(big_cont)
+
+    return image[y:y+h, x:x+w]
+
+
 def extract_contours(image):
     imgray = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
     ret, thresh = cv.threshold(imgray, 127, 255, 0)
     contours, hierarchy = cv.findContours(
         thresh, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
+
+    print(hierarchy)
 
     return sorted(contours, key=cv.contourArea, reverse=True)
 
@@ -44,7 +69,7 @@ def plot_2img_compare(original_image, result):
     fig, axes = plt.subplots(1, 2)
 
     axes[0].set_title("Original Image")
-    axes[0].imshow(original_image)
+    axes[0].imshow(original_image, cmap=plt.cm.gray)
 
     axes[1].set_title("Result")
     axes[1].imshow(result, cmap=plt.cm.gray)
@@ -59,12 +84,12 @@ def plot_img(image, title="Image Title"):
     plt.show()
 
 
-image = cv.imread("sign_sheets/1.jpeg")
-# biggest_contour = extract_biggest_contour(image)
+# image = cv.imread("sign_sheets/1.jpeg")
+# # biggest_contour = extract_biggest_contour(image)
 
-# result = perspective_transform(image, biggest_contour)
+# # result = perspective_transform(image, biggest_contour)
 
-contours = extract_contours(image)
-cv.drawContours(image, contours, -1, (0, 255, 0), 3)
+# contours = extract_contours(image)
+# cv.drawContours(image, contours, -1, (0, 255, 0), 3)
 
-plot_img(image)
+# plot_img(image)
