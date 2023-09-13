@@ -1,6 +1,8 @@
 import cv2 as cv
 import matplotlib.pyplot as plt
 import numpy as np
+import pytesseract
+import re
 
 
 def crop_image_to_table_area(image):
@@ -131,10 +133,65 @@ def extract_sign_table(image):
     return perspective_transform(cropped_image, biggest_contour)
 
 
-image = cv.imread("sign_sheets/4.jpeg")
+def warp_image_to_fixed_size(image, target_width=2200, target_height=630):
+    # Resize the image to the target dimensions without maintaining the aspect ratio
+    warped_image = cv.resize(image, (target_width, target_height))
 
-extracted_table = extract_sign_table(image)
+    return warped_image
 
-plot_img(extracted_table)
 
-# cv.imwrite("extracted5.jpeg", extracted_table)
+def horizontally_divide_image(image, no_of_segments=7):
+    segment_height = 630 // no_of_segments
+    height, width = image.shape[:2]
+
+    image_segments = []
+
+    num_segments = height // segment_height
+
+    for i in range(num_segments):
+        start_y = i * segment_height
+        end_y = (i + 1) * segment_height
+
+        segment = image[start_y:end_y, :]
+        image_segments.append(segment)
+
+    return image_segments
+
+
+def extract_table_rows(image):
+    extracted_table = extract_sign_table(image)
+    fixed_size_image = warp_image_to_fixed_size(extracted_table)
+    return horizontally_divide_image(fixed_size_image)
+
+
+def removeSpecialChars(type, string):
+
+    if type == 'name':
+        string = re.sub(r'^.*?\n', '', string)
+
+    string = string.split("\n")
+    print(string[0])
+    return string[0]
+
+
+def read_id(row):
+    imgray = cv.cvtColor(row, cv.COLOR_BGR2GRAY)
+    _, thresh = cv.threshold(imgray, 127, 255, 0)
+    text = pytesseract.image_to_string(thresh)
+    pattern = r'\b\d{8}\b'
+    matches = re.findall(pattern, text)
+    if matches:
+        student_id = matches[0]
+    else:
+        student_id = None
+
+    return student_id
+
+
+image = cv.imread("sign_sheets/5.jpeg")
+
+rows = extract_table_rows(image)
+
+for i, row in enumerate(rows):
+    id = read_id(row)
+    print(id)
