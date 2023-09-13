@@ -77,22 +77,26 @@ def extract_biggest_contour(image):
 
 
 def perspective_transform(image, contour):
-    # get perimeter and approximate a polygon
+    (_, _), (w, h), _ = cv.minAreaRect(contour)
+
+    # Get perimeter and approximate a polygon
     peri = cv.arcLength(contour, True)
     corners = cv.approxPolyDP(contour, 0.04 * peri, True)
 
     # Define the input corners of the quadrilateral 'corners'
     icorners = np.float32(corners)
 
+    # Calculate the bounding rectangle of the contour
     x, y, wd, ht = cv.boundingRect(icorners)
 
-    # Define the corresponding output corners for the rectangle
-    ocorners = np.float32([[wd, 0], [wd, ht], [0, ht], [0, 0]])
+    if w > h:
+        ocorners = np.float32([[0, 0], [wd, 0], [wd, ht], [0, ht]])
+    else:
+        ocorners = np.float32([[wd, 0], [wd, ht], [0, ht], [0, 0]])
 
-    # get perspective tranformation matrix
+    # Get perspective transformation matrix
     M = cv.getPerspectiveTransform(icorners, ocorners)
 
-    # do perspective
     return cv.warpPerspective(image, M, (wd, ht))
 
 
@@ -119,8 +123,6 @@ def extract_sign_table(image):
     cropped_image = crop_image_to_table_area(image)
     table_line_image = extract_table_lines(cropped_image)
 
-    plot_img(table_line_image)
-
     contours, hierarchy = cv.findContours(
         table_line_image, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
 
@@ -129,7 +131,7 @@ def extract_sign_table(image):
     return perspective_transform(cropped_image, biggest_contour)
 
 
-image = cv.imread("sign_sheets/3.jpeg")
+image = cv.imread("sign_sheets/4.jpeg")
 
 extracted_table = extract_sign_table(image)
 
