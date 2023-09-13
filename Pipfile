@@ -10,6 +10,8 @@ pillow = "*"
 pytesseract = "*"
 matplotlib = "*"
 imutils = "*"
+sqlalchemy = "*"
+
 
 [dev-packages]
 
