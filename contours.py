@@ -188,10 +188,52 @@ def read_id(row):
     return student_id
 
 
-image = cv.imread("sign_sheets/5.jpeg")
+def crop_signature_cell(image, crop_width=475):
+    height, width = image.shape[:2]
+    start_x = max(width - crop_width, 0)
+    end_x = width
+    cropped_segment = image[:, start_x:end_x]
+    return cropped_segment
 
-rows = extract_table_rows(image)
 
-for i, row in enumerate(rows):
-    id = read_id(row)
-    print(id)
+def count_black_pixels(thresholded_image):
+    black_pixel_count = np.count_nonzero(thresholded_image == 0)
+    return black_pixel_count
+
+
+def is_present(row):
+    signature_cell = crop_signature_cell(row)
+    cell_gray = cv.cvtColor(signature_cell, cv.COLOR_BGR2GRAY)
+    _, thresh = cv.threshold(cell_gray, 127, 255, 0)
+
+    black_pixels_count = count_black_pixels(thresh)
+
+    if (black_pixels_count > 4000):
+        attendance_status = True
+    else:
+        attendance_status = False
+
+    return attendance_status
+
+
+def get_attendance_report(image):
+    rows = extract_table_rows(image)
+    row = rows[5]
+
+    result = []
+
+    for row in rows:
+        id = read_id(row)
+        if id is not None:
+            is_present_value = is_present(row)
+            result.append({"id": id, "is_present": is_present_value})
+
+    return result
+
+
+image = cv.imread("sign_sheets/3.jpeg")
+
+attendance_report = get_attendance_report(image)
+for item in attendance_report:
+    print(
+        f"ID: {item['id']} is {'present' if item['is_present'] else 'absent'}")
