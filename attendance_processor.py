@@ -209,11 +209,3 @@ def get_attendance_report(image):
             result.append({"id": id, "is_present": is_present_value})
 
     return result
-
-
-image = cv.imread("sign_sheets/3.jpeg")
-
-attendance_report = get_attendance_report(image)
-for item in attendance_report:
-    print(
-        f"ID: {item['id']} is {'present' if item['is_present'] else 'absent'}")

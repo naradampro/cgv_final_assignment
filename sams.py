@@ -1,31 +1,38 @@
+import sys
 import cv2 as cv
-import numpy as np
-from table_detection.find_contours import filter_contours_and_keep_rectangles, find_and_draw_contours, find_largest_contour_by_area  
+import attendance_processor as attendace
+from xml_processor.student import StudentCollection
 
 SIGN_SHEETS_PATH = "sign_sheets/"
 
-def sign_sheet_image(name):
-    return "{}{}.{}".format(SIGN_SHEETS_PATH, name, "jpeg")
 
-# Load the image
-img = cv.imread(sign_sheet_image(1)) 
+def sign_sheet_image(file_name):
+    return "{}{}".format(SIGN_SHEETS_PATH, file_name)
 
-#  Draw contours on the original image
-contour = find_and_draw_contours(img)
 
-# Draw the filtered contours on the image
-rectangular_contours, image_with_rectangles = filter_contours_and_keep_rectangles(img, contour)
+def print_attendace(attendance_report):
+    for item in attendance_report:
+        print(
+            f"ID: {item['id']} is {'present' if item['is_present'] else 'absent'}")
 
-find_largest_contour_by_area_in_img = find_largest_contour_by_area(img, rectangular_contours)
 
-# Resize the image with contours (not the contours themselves)
-new_width = 800
-new_height = 600
-resized_img = cv.resize(find_largest_contour_by_area_in_img, (new_width, new_height))
+def attendace_report(image_file):
+    image = cv.imread(sign_sheet_image(image_file))
 
-# Display the resized image
-cv.imshow('Resized Image with Contours', resized_img)
+    return attendace.get_attendance_report(image)
 
-# Wait for a key event and close the window when any key is pressed
-cv.waitKey(0)
-cv.destroyAllWindows()
+
+def arguments():
+    if len(sys.argv) != 3:
+        print("Usage: python sams.py <info.xml> <image.jpeg>")
+        return
+    info_file = sys.argv[1]
+    image_file = sys.argv[2]
+
+    return info_file, image_file
+
+
+if __name__ == "__main__":
+    info_file, image_file = arguments()
+    attendace_rep = attendace_report(image_file)
+    print_attendace(attendace_rep)
