@@ -23,16 +23,4 @@ if __name__ == "__main__":
         else:
             is_present_counts['Absent'] += 1
 
-    # Create a pie chart
-    labels = list(is_present_counts.keys())
-    sizes = list(is_present_counts.values())
-    colors = ['#74ed7c', '#ed7474']
-    explode = (0.1, 0)  # explode the 'Present' slice
-
-    plt.pie(sizes, labels=labels, colors=colors,
-            autopct='%1.1f%%', startangle=90)
-    # Equal aspect ratio ensures that pie is drawn as a circle.
-    plt.axis('equal')
-
-    plt.title(f"Attendance Distribution for Student ID {student_id}")
-    plt.show()
+    visualize.plot_attendance_chart(student_id, is_present_counts)
