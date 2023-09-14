@@ -23,6 +23,9 @@ The following packages are required for this project and will be installed with 
 - pillow
 - pytesseract
 - matplotlib
+- sqlalchemy
+- scipy
+- prettytable
 
 ## Development Dependencies
 

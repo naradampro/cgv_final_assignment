@@ -1,15 +1,8 @@
 import matplotlib.pyplot as plt
 
-# Sample data for student attendance
-sample_data = [
-    {"student_id": 1, "name": "John Doe", "present": 20, "absent": 5},
-    {"student_id": 2, "name": "Jane Smith", "present": 18, "absent": 7},
-    {"student_id": 3, "name": "Alice Johnson", "present": 22, "absent": 3},
-]
 
-# should retrieve from the database. For testing purposes, I have used the above sample data
-def get_student_attendance_by_id(student_id):
-    for data in sample_data:
+def get_student_attendance_by_id(student_id, data_records):
+    for data in data_records:
         if data["student_id"] == student_id:
             return {
                 "Present": data["present"],
@@ -18,9 +11,9 @@ def get_student_attendance_by_id(student_id):
     return None
 
 
-def get_all_students_attendance():
+def get_all_students_attendance(data_records):
     attendance_data = []
-    for data in sample_data:
+    for data in data_records:
         attendance_data.append({
             "student_id": data["student_id"],
             "present": data["present"],
@@ -37,7 +30,8 @@ def plot_student_attendance_pie(student_id):
         sizes = [student_data['Present'], student_data['Absent']]
         colors = ['#66b3ff', '#ff9999']
         plt.figure(figsize=(6, 6))
-        plt.pie(sizes, labels=labels, colors=colors, autopct='%1.1f%%', startangle=140)
+        plt.pie(sizes, labels=labels, colors=colors,
+                autopct='%1.1f%%', startangle=140)
         plt.title(f'Attendance for Student {student_id}')
         plt.axis('equal')
         plt.show()
@@ -48,13 +42,15 @@ def plot_all_students_attendance_bar():
 
     student_ids = [data["student_id"] for data in all_students_data]
     present_counts = [data["present"] for data in all_students_data]
-    absent_counts = [data["total"] - data["present"] for data in all_students_data]
+    absent_counts = [data["total"] - data["present"]
+                     for data in all_students_data]
 
     colors = ['#66b3ff', '#ff9999']
 
     plt.figure(figsize=(10, 6))
     plt.bar(student_ids, present_counts, label='Present', color=colors[0])
-    plt.bar(student_ids, absent_counts, bottom=present_counts, label='Absent', color=colors[1])
+    plt.bar(student_ids, absent_counts, bottom=present_counts,
+            label='Absent', color=colors[1])
     plt.title('Attendance Summary for All Students')
     plt.xlabel('Student ID')
     plt.ylabel('Attendance Count')
@@ -64,6 +60,15 @@ def plot_all_students_attendance_bar():
     plt.show()
 
 
-student_id = 3
-plot_student_attendance_pie(student_id)
-plot_all_students_attendance_bar()
+def plot_attendance_chart(student_id, is_present_counts):
+    labels = list(is_present_counts.keys())
+    sizes = list(is_present_counts.values())
+    title = f"Attendance Distribution for Student ID {student_id}"
+    plt.figure(title)
+    colors = ['#74ed7c', '#ed7474']
+
+    plt.pie(sizes, labels=labels, colors=colors,
+            autopct='%1.1f%%', startangle=0)
+    plt.axis('equal')
+    plt.title(title)
+    plt.show()

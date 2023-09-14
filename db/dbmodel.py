@@ -57,3 +57,18 @@ def session_id_exists(session_id):
         print("Error:", str(e))
     finally:
         session.close()
+
+
+def get_attendance_records_by_student_id(student_id):
+    session, _ = create_session()
+
+    try:
+        # Query the database to retrieve all attendance records for the given student_id
+        attendance_records = session.query(
+            Attendance).filter_by(student_id=student_id).all()
+
+        return attendance_records
+    except Exception as e:
+        print("Error:", str(e))
+    finally:
+        session.close()
