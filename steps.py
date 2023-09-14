@@ -1,28 +1,45 @@
 import cv2 as cv
+import matplotlib.pyplot as plt
 import numpy as np
 import pytesseract
 import re
+import display_utils.img_plot as plot
 
 
 def crop_image_to_table_area(image):
     imgray = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
 
+    # plot.compare_two(image, imgray)
+
     blurred_image = cv.GaussianBlur(imgray, (21, 21), sigmaX=15)
+
+    # plot.compare_two(imgray, blurred_image)
 
     ret, thresh = cv.threshold(blurred_image, 127, 255, 0)
     contours, hierarchy = cv.findContours(
         thresh, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
 
+    # plot.compare_two(blurred_image, thresh)
+
     kernel = np.ones((30, 30), np.uint8)
 
     eroded_image = cv.erode(thresh, kernel, iterations=15)
+
+    # plot.compare_two(thresh, eroded_image)
 
     contours, hierarchy = cv.findContours(
         eroded_image, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
 
     big_cont = contours[1]
 
+    cont_img = image.copy()
+    # cv.drawContours(cont_img, [big_cont], 0, (0, 255, 0), 3)
+    # plot.compare_two(eroded_image, cont_img)
+
     x, y, w, h = cv.boundingRect(big_cont)
+    # cv.rectangle(cont_img, (x, y), (x+w, y+h), (255, 0, 0), 2)
+
+    # plot.compare_two(cont_img, image[y:y+h, x:x+w])
 
     return image[y:y+h, x:x+w]
 
@@ -37,6 +54,8 @@ def extract_table_lines(img):
                                 128, 255, cv.THRESH_BINARY | cv.THRESH_OTSU)
     img_bin = cv.bitwise_not(img_bin)
 
+    # plot.compare_two(img_gray, img_bin)
+
     kernel_length_v = (np.array(img_gray).shape[1]) // 120
     vertical_kernel = cv.getStructuringElement(
         cv.MORPH_RECT, (1, kernel_length_v))
@@ -44,18 +63,30 @@ def extract_table_lines(img):
 
     vertical_lines_img = cv.dilate(im_temp1, vertical_kernel, iterations=3)
 
+    # plot.compare_two(img_bin, vertical_lines_img)
+
     kernel_length_h = (np.array(img_gray).shape[1]) // 120
     horizontal_kernel = cv.getStructuringElement(
         cv.MORPH_RECT, (kernel_length_h, 1))
     im_temp2 = cv.erode(img_bin, horizontal_kernel, iterations=3)
     horizontal_lines_img = cv.dilate(im_temp2, horizontal_kernel, iterations=3)
 
+    # plot.compare_two(img_bin, horizontal_lines_img)
+
     kernel = cv.getStructuringElement(cv.MORPH_RECT, (3, 3))
     table_segment = cv.addWeighted(
         vertical_lines_img, 0.5, horizontal_lines_img, 0.5, 0.0)
-    table_segment = cv.erode(cv.bitwise_not(
+
+    # plot.add_two(horizontal_lines_img, vertical_lines_img, table_segment)
+
+    enhanced_segment = cv.erode(cv.bitwise_not(
         table_segment), kernel, iterations=2)
-    _, table_segment = cv.threshold(table_segment, 0, 255, cv.THRESH_OTSU)
+
+    # plot.compare_two(table_segment, enhanced_segment)
+
+    _, table_segment = cv.threshold(enhanced_segment, 0, 255, cv.THRESH_OTSU)
+
+    # plot.compare_two(enhanced_segment, table_segment)
 
     return table_segment
 
@@ -99,25 +130,6 @@ def perspective_transform(image, contour):
     M = cv.getPerspectiveTransform(icorners, ocorners)
 
     return cv.warpPerspective(image, M, (wd, ht))
-
-
-def plot_2img_compare(original_image, result):
-    fig, axes = plt.subplots(1, 2)
-
-    axes[0].set_title("Original Image")
-    axes[0].imshow(original_image, cmap=plt.cm.gray)
-
-    axes[1].set_title("Result")
-    axes[1].imshow(result, cmap=plt.cm.gray)
-
-    plt.tight_layout()
-    plt.show()
-
-
-def plot_img(image, title="Image Title"):
-    plt.imshow(image, cmap=plt.cm.gray)
-    plt.title(title)
-    plt.show()
 
 
 def extract_sign_table(image):
@@ -202,7 +214,6 @@ def count_black_pixels(thresholded_image):
 
 def is_present(row):
     signature_cell = crop_signature_cell(row)
-    plot_img(signature_cell)
     cell_gray = cv.cvtColor(signature_cell, cv.COLOR_BGR2GRAY)
     _, thresh = cv.threshold(cell_gray, 127, 255, 0)
 
