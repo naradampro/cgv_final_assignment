@@ -8,6 +8,8 @@ sample_data = [
 ]
 
 # should retrieve from the database. For testing purposes, I have used the above sample data
+
+
 def get_student_attendance_by_id(student_id):
     for data in sample_data:
         if data["student_id"] == student_id:
@@ -37,7 +39,8 @@ def plot_student_attendance_pie(student_id):
         sizes = [student_data['Present'], student_data['Absent']]
         colors = ['#66b3ff', '#ff9999']
         plt.figure(figsize=(6, 6))
-        plt.pie(sizes, labels=labels, colors=colors, autopct='%1.1f%%', startangle=140)
+        plt.pie(sizes, labels=labels, colors=colors,
+                autopct='%1.1f%%', startangle=140)
         plt.title(f'Attendance for Student {student_id}')
         plt.axis('equal')
         plt.show()
@@ -48,13 +51,15 @@ def plot_all_students_attendance_bar():
 
     student_ids = [data["student_id"] for data in all_students_data]
     present_counts = [data["present"] for data in all_students_data]
-    absent_counts = [data["total"] - data["present"] for data in all_students_data]
+    absent_counts = [data["total"] - data["present"]
+                     for data in all_students_data]
 
     colors = ['#66b3ff', '#ff9999']
 
     plt.figure(figsize=(10, 6))
     plt.bar(student_ids, present_counts, label='Present', color=colors[0])
-    plt.bar(student_ids, absent_counts, bottom=present_counts, label='Absent', color=colors[1])
+    plt.bar(student_ids, absent_counts, bottom=present_counts,
+            label='Absent', color=colors[1])
     plt.title('Attendance Summary for All Students')
     plt.xlabel('Student ID')
     plt.ylabel('Attendance Count')
@@ -62,8 +67,3 @@ def plot_all_students_attendance_bar():
     plt.xticks(student_ids)
     plt.tight_layout()
     plt.show()
-
-
-student_id = 3
-plot_student_attendance_pie(student_id)
-plot_all_students_attendance_bar()
