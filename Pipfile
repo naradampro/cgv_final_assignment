@@ -11,7 +11,7 @@ pytesseract = "*"
 matplotlib = "*"
 imutils = "*"
 sqlalchemy = "*"
-
+scipy = "*"
 
 [dev-packages]
 

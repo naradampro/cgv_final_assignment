@@ -1,18 +1,68 @@
 <students>
-    <student>
-        <index_no>001</index_no>
-        <name>John Snow</name>
-        <age>20</age>
-    </student>
-    <student>
-        <index_no>007</index_no>
-        <name>James Bond</name>
-        <age>22</age>
-    </student>
-    <student>
-        <index_no>009</index_no>
-        <name>Andare</name>
-        <age>21</age>
-    </student>
-    
+	<student>
+		<student_no>
+			10000409
+		</student_no>
+		<title>
+			Ms
+		</title>
+		<name>
+			M S Dilshanika Perera
+		</name>
+	</student>
+	<student>
+		<student_no>
+			10009301
+		</student_no>
+		<title>
+			Mr
+		</title>
+		<name>
+			C W M A Shehan Abeyrathne
+		</name>
+	</student>
+	<student>
+		<student_no>
+			10009302
+		</student_no>
+		<title>
+			Mr
+		</title>
+		<name>
+			B A K M Chithrananda
+		</name>
+	</student>
+	<student>
+		<student_no>
+			10009303
+		</student_no>
+		<title>
+			Ms
+		</title>
+		<name>
+			W Shashini Minosha De Silva
+		</name>
+	</student>
+	<student>
+		<student_no>
+			10009304
+		</student_no>
+		<title>
+			Mr
+		</title>
+		<name>
+			K L Udara Maduranga Liyanage
+		</name>
+	</student>
+	<student>
+		<student_no>
+			10009306
+		</student_no>
+		<title>
+			Mr
+		</title>
+		<name>
+			Hansa Anuradha Wickramanayake
+		</name>
+	</student>
 </students>

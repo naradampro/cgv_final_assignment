@@ -1,10 +1,12 @@
 import xml.etree.ElementTree as ET
 
+
 class Student:
-    def __init__(self, index_no, name, age):
-        self.index_no = index_no
+    def __init__(self, student_no, title, name):
+        self.student_no = student_no
         self.name = name
-        self.age = age
+        self.title = title
+
 
 class StudentCollection:
     def __init__(self, xml_file):
@@ -16,16 +18,16 @@ class StudentCollection:
         root = tree.getroot()
 
         for student_element in root.findall('student'):
-            index_no = student_element.find('index_no').text
-            name = student_element.find('name').text
-            age = student_element.find('age').text
+            student_no = student_element.find('student_no').text.strip()
+            title = student_element.find('title').text.strip()
+            name = student_element.find('name').text.strip()
 
-            student = Student(index_no, name, age)
+            student = Student(student_no, title, name)
             self.students.append(student)
 
-    def find_by_index_no(self, index_no):
+    def find_by_student_no(self, student_no):
         for student in self.students:
-            if student.index_no == index_no:
+            if student.student_no == student_no:
                 return student
         return None
 
