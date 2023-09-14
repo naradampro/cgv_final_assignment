@@ -176,6 +176,7 @@ def horizontally_divide_image(image, no_of_segments=7):
         segment = image[start_y:end_y, :]
 
         image_segments.append(segment)
+        cv.imwrite(f"outputs/out3cellthresh{i}.jpeg", segment)
 
     return image_segments
 
@@ -256,7 +257,7 @@ def get_attendance_report(image):
     return result
 
 
-image = cv.imread("sign_sheets/3.jpeg")
+image = cv.imread("sign_sheets/2.jpeg")
 
 attendance_report = get_attendance_report(image)
 for item in attendance_report:
