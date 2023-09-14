@@ -1,55 +1,59 @@
 from sqlalchemy import create_engine, Column, Integer, String, Boolean
 from sqlalchemy.orm import declarative_base, sessionmaker
 
-# Create an SQLite database file
-engine = create_engine('sqlite:///data.db', echo=True)
-
-# Create a base class for declarative models
 Base = declarative_base()
 
-# Define a sample model for students
-class Student(Base):
-    __tablename__ = 'students'
-    
-    student_id = Column(Integer, primary_key=True)
-    name = Column(String)
-
-class Sessionclass(Base):
-    __tablename__ = 'sessionclass'
-    
-    sessionclass_id = Column(Integer, primary_key=True)
-    date = Column(String)
-    topic = Column(String)
 
 class Attendance(Base):
     __tablename__ = 'attendance'
-    
-    attendance_id = Column(Integer, primary_key=True)
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
     student_id = Column(Integer)
     sessionclass_id = Column(Integer)
     is_present = Column(Boolean, default=False)
 
-# Create the tables in the database
-Base.metadata.create_all(engine)
 
-# Create a session factory
-Session = sessionmaker(bind=engine)
+def create_session():
+    engine = create_engine('sqlite:///attendance.db')
+    Session = sessionmaker(bind=engine)
+    session = Session()
 
-# Create a session to interact with the database
-session = Session()
+    return session, engine
 
-# Create a new student
-new_student = Student(student_id=1, name='John Doe')
-session.add(new_student)
-session.commit()
 
-# Create a new session 
-new_sessionclass = Sessionclass(sessionclass_id=1, date='2023-08-16', topic='Some Topic')
-session.add(new_sessionclass)
-session.commit()
+def create_attendance_record(session_id, student_id, is_present):
+    session, engine = create_session()
+    try:
+        # Create the table if it doesn't exist
+        Base.metadata.create_all(engine)
 
-# Create a new attendance entry
-new_attendance = Attendance(attendance_id=1, student_id=1, sessionclass_id=1, is_present=True)
-session.add(new_attendance)
-session.commit()
+        # Create a new Attendance record
+        attendance_record = Attendance(
+            sessionclass_id=session_id, student_id=student_id, is_present=is_present)
 
+        # Add the record to the session and commit it to the database
+        session.add(attendance_record)
+        session.commit()
+
+        print("Attendance record created successfully with ID:",
+              attendance_record.id)
+    except Exception as e:
+        session.rollback()
+        print("Error:", str(e))
+    finally:
+        session.close()
+
+
+def session_id_exists(session_id):
+    session, _ = create_session()
+
+    try:
+        # Check if a record with the same session_id exists
+        existing_record = session.query(Attendance).filter_by(
+            sessionclass_id=session_id).first()
+
+        return existing_record is not None
+    except Exception as e:
+        print("Error:", str(e))
+    finally:
+        session.close()
