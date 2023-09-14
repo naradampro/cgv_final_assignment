@@ -136,12 +136,22 @@ def extract_sign_table(image):
     cropped_image = crop_image_to_table_area(image)
     table_line_image = extract_table_lines(cropped_image)
 
+    # plot.compare_two(cropped_image, table_line_image)
+
     contours, hierarchy = cv.findContours(
         table_line_image, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
 
     biggest_contour = contours[1]
+    image = cropped_image.copy()
 
-    return perspective_transform(cropped_image, biggest_contour)
+    # cv.drawContours(cropped_image, [biggest_contour], 0, (0, 255, 0), 3)
+    # plot.compare_two(image, cropped_image)
+
+    perspective_img = perspective_transform(cropped_image, biggest_contour)
+
+    # plot.compare_two(cropped_image, perspective_img)
+
+    return perspective_img
 
 
 def warp_image_to_fixed_size(image, target_width=2200, target_height=630):
@@ -164,6 +174,7 @@ def horizontally_divide_image(image, no_of_segments=7):
         end_y = (i + 1) * segment_height
 
         segment = image[start_y:end_y, :]
+
         image_segments.append(segment)
 
     return image_segments
@@ -212,10 +223,13 @@ def count_black_pixels(thresholded_image):
     return black_pixel_count
 
 
-def is_present(row):
+def is_present(row, id):
     signature_cell = crop_signature_cell(row)
+
     cell_gray = cv.cvtColor(signature_cell, cv.COLOR_BGR2GRAY)
     _, thresh = cv.threshold(cell_gray, 127, 255, 0)
+
+    # cv.imwrite(f"outputs/out3cellthresh{id}.jpeg", thresh)
 
     black_pixels_count = count_black_pixels(thresh)
 
@@ -236,7 +250,7 @@ def get_attendance_report(image):
     for row in rows:
         id = read_id(row)
         if id is not None:
-            is_present_value = is_present(row)
+            is_present_value = is_present(row, id)
             result.append({"id": id, "is_present": is_present_value})
 
     return result
