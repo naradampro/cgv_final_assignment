@@ -2,6 +2,7 @@ import sys
 import cv2 as cv
 import attendance_processor as attendace
 from xml_processor.student import StudentCollection
+from prettytable import PrettyTable
 
 SIGN_SHEETS_PATH = "sign_sheets/"
 
@@ -10,10 +11,18 @@ def sign_sheet_image(file_name):
     return "{}{}".format(SIGN_SHEETS_PATH, file_name)
 
 
-def print_attendace(attendance_report):
+def print_attendance(attendance_report, students_info):
+    table = PrettyTable()
+    table.field_names = ["Student ID", "Student Name", "Attendance Status"]
+
     for item in attendance_report:
-        print(
-            f"ID: {item['id']} is {'present' if item['is_present'] else 'absent'}")
+        student = students_info.find_by_student_no(item['id'])
+        if student:
+            student_name = student.name
+            attendance_status = 'Present' if item['is_present'] else 'Absent'
+            table.add_row([item['id'], student_name, attendance_status])
+
+    print(table)
 
 
 def attendace_report(image_file):
@@ -34,5 +43,6 @@ def arguments():
 
 if __name__ == "__main__":
     info_file, image_file = arguments()
-    attendace_rep = attendace_report(image_file)
-    print_attendace(attendace_rep)
+    attendance_rep = attendace_report(image_file)
+    student_info = StudentCollection(info_file)
+    print_attendance(attendance_rep, student_info)
