@@ -9,15 +9,20 @@ import custom_processors.custom_processors as custom_algos
 def crop_image_to_table_area(image):
     imgray = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
 
-    blurred_image = cv.GaussianBlur(imgray, (21, 21), sigmaX=15)
+    gaussian_kernal = custom_algos.gaussian_kernel(21, 15)
 
-    ret, thresh = cv.threshold(blurred_image, 127, 255, 0)
+    blurred_image = custom_algos.gaussian_filter(imgray, gaussian_kernal)
+
+    thresh = custom_algos.custom_threshold(blurred_image, 40)
+
     contours, hierarchy = cv.findContours(
         thresh, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
 
     kernel = np.ones((30, 30), np.uint8)
 
-    eroded_image = cv.erode(thresh, kernel, iterations=15)
+    eroded_image = cv.erode(thresh, kernel, iterations=10)
+
+    plot_img(eroded_image)
 
     contours, hierarchy = cv.findContours(
         eroded_image, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
@@ -232,7 +237,7 @@ def get_attendance_report(image):
     return result
 
 
-image = cv.imread("sign_sheets/3.jpeg")
+image = cv.imread("sign_sheets/1.jpeg")
 
 attendance_report = get_attendance_report(image)
 for item in attendance_report:
