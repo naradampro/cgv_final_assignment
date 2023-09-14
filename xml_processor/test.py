@@ -1,4 +1,4 @@
-from student import StudentCollection
+from xml_processor.student import StudentCollection
 
 if __name__ == "__main__":
     collection = StudentCollection("info.xml")
