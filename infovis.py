@@ -30,7 +30,7 @@ if __name__ == "__main__":
     explode = (0.1, 0)  # explode the 'Present' slice
 
     plt.pie(sizes, labels=labels, colors=colors,
-            autopct='%1.1f%%', startangle=140)
+            autopct='%1.1f%%', startangle=90)
     # Equal aspect ratio ensures that pie is drawn as a circle.
     plt.axis('equal')
 
