@@ -1,17 +1,8 @@
 import matplotlib.pyplot as plt
 
-# Sample data for student attendance
-sample_data = [
-    {"student_id": 1, "name": "John Doe", "present": 20, "absent": 5},
-    {"student_id": 2, "name": "Jane Smith", "present": 18, "absent": 7},
-    {"student_id": 3, "name": "Alice Johnson", "present": 22, "absent": 3},
-]
 
-# should retrieve from the database. For testing purposes, I have used the above sample data
-
-
-def get_student_attendance_by_id(student_id):
-    for data in sample_data:
+def get_student_attendance_by_id(student_id, data_records):
+    for data in data_records:
         if data["student_id"] == student_id:
             return {
                 "Present": data["present"],
@@ -20,9 +11,9 @@ def get_student_attendance_by_id(student_id):
     return None
 
 
-def get_all_students_attendance():
+def get_all_students_attendance(data_records):
     attendance_data = []
-    for data in sample_data:
+    for data in data_records:
         attendance_data.append({
             "student_id": data["student_id"],
             "present": data["present"],
