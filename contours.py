@@ -101,25 +101,6 @@ def perspective_transform(image, contour):
     return cv.warpPerspective(image, M, (wd, ht))
 
 
-def plot_2img_compare(original_image, result):
-    fig, axes = plt.subplots(1, 2)
-
-    axes[0].set_title("Original Image")
-    axes[0].imshow(original_image, cmap=plt.cm.gray)
-
-    axes[1].set_title("Result")
-    axes[1].imshow(result, cmap=plt.cm.gray)
-
-    plt.tight_layout()
-    plt.show()
-
-
-def plot_img(image, title="Image Title"):
-    plt.imshow(image, cmap=plt.cm.gray)
-    plt.title(title)
-    plt.show()
-
-
 def extract_sign_table(image):
     cropped_image = crop_image_to_table_area(image)
     table_line_image = extract_table_lines(cropped_image)
@@ -202,7 +183,6 @@ def count_black_pixels(thresholded_image):
 
 def is_present(row):
     signature_cell = crop_signature_cell(row)
-    plot_img(signature_cell)
     cell_gray = cv.cvtColor(signature_cell, cv.COLOR_BGR2GRAY)
     _, thresh = cv.threshold(cell_gray, 127, 255, 0)
 
