@@ -12,6 +12,7 @@ matplotlib = "*"
 imutils = "*"
 sqlalchemy = "*"
 scipy = "*"
+prettytable = "*"
 
 [dev-packages]
 
