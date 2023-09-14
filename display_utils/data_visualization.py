@@ -67,3 +67,16 @@ def plot_all_students_attendance_bar():
     plt.xticks(student_ids)
     plt.tight_layout()
     plt.show()
+
+
+def plot_attendance_chart(student_id, is_present_counts):
+    labels = list(is_present_counts.keys())
+    sizes = list(is_present_counts.values())
+    colors = ['#74ed7c', '#ed7474']
+
+    plt.pie(sizes, labels=labels, colors=colors,
+            autopct='%1.1f%%', startangle=90)
+    plt.axis('equal')
+
+    plt.title(f"Attendance Distribution for Student ID {student_id}")
+    plt.show()
